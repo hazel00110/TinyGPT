@@ -4,7 +4,9 @@
 
 <br>
 
-# TinyGPT: A Pure Rust GPT Implementation From Scratch
+# TinyGPT
+
+## A Pure Rust GPT Implementation From Scratch
 A comprehensive tutorial implementation of a GPT (Generative Pre-trained Transformer) language model written entirely in pure Rust using only the `ndarray` crate for tensor operations. This project demonstrates how to build a working transformer architecture from first principles without relying on deep learning frameworks.
 
 <br>
